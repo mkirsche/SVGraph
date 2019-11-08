@@ -21,44 +21,49 @@ public class Chromosome {
 	int n; // The length of the chromosome in basepairs
 	TreeMap<Edge, Integer>[][] graph;
 	String chromosome;
-	@SuppressWarnings("unchecked")
 	
-	/*
-	 * Construct the intial graph
-	 */
 	Chromosome(String name, String chromosome)
 	{
 		this.name = name;
 		this.n = chromosome.length();
 		this.chromosome = chromosome;
 		
+		initGraph();
+	}
+	
+	/*
+	 * Construct the initial graph
+	 */
+	@SuppressWarnings("unchecked")
+	void initGraph()
+	{
 		// Allocate data structure
-		graph = new TreeMap[2][n+2];
-		for(int i = 0; i<graph.length; i++)
-		{
-			for(int j = 0; j<graph[i].length; j++)
-			{
-				graph[i][j] = new TreeMap<Edge, Integer>();
-			}
-		}
-		for(int i = 0; i <= n + 1; i++)
-		{
-			// Edge from - to +
-			if(i >= 1 && i <= n)
-			{
-				addEdge(0, i, 1, i, chromosome.charAt(i - 1) + "", true);
-			}
-			else
-			{
-				addEdge(0, i, 1, i, "", true);
-			}
-			
-			// Edge from + to next -
-			if(i != n + 1)
-			{
-				addEdge(1, i, 0, i+1, "", true);
-			}
-		}
+				graph = new TreeMap[2][n+2];
+				for(int i = 0; i<graph.length; i++)
+				{
+					for(int j = 0; j<graph[i].length; j++)
+					{
+						graph[i][j] = new TreeMap<Edge, Integer>();
+					}
+				}
+				for(int i = 0; i <= n + 1; i++)
+				{
+					// Edge from - to +
+					if(i >= 1 && i <= n)
+					{
+						addEdge(0, i, 1, i, "", true);
+					}
+					else
+					{
+						addEdge(0, i, 1, i, "", true);
+					}
+					
+					// Edge from + to next -
+					if(i != n + 1)
+					{
+						addEdge(1, i, 0, i+1, "", true);
+					}
+				}
 	}
 	
 	/*
@@ -84,6 +89,9 @@ public class Chromosome {
 			}
 		}
 	}
+	
+	// Useful for overriding classes which need to process all SVs at once (e.g., to compress the graph)
+	void processAllSVs() {}
 	
 	/*
 	 * Add an edge to the graph
@@ -167,7 +175,7 @@ public class Chromosome {
 					atStrand = 1;
 					if(atPos != 0)
 					{
-						pathSequence.append(chromosome.charAt(atPos-1));
+						pathSequence.append(getSeq(atPos, 0, new Edge(1, atPos)));
 					}
 					continue;
 				}
@@ -184,13 +192,25 @@ public class Chromosome {
 			Edge first = options.firstKey();
 			
 			removeEdge(atStrand, atPos, first);
-			
-			pathSequence.append(first.seq);
+			pathSequence.append(getSeq(atPos, atStrand, first));
 			atStrand = first.toStrand;
 			atPos = first.toPos;
 		}
 		
 		return pathSequence.toString();
+	}
+	
+	/*
+	 * Get the sequence of an edge, filling it in from the genome if needed
+	 */
+	String getSeq(int atPos, int atStrand, Edge e)
+	{
+		if(e.seq.length() > 0) return e.seq;
+		if(atPos == e.toPos && atPos > 0 && atPos != n+1)
+		{
+			return chromosome.charAt(atPos - 1) + "";
+		}
+		return "";
 	}
 	
 	/*

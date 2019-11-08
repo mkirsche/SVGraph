@@ -9,12 +9,11 @@ public class TestVariantGraph {
 		
 		System.out.println("Initial genome:\n" + genome + "\n");
 		
-		Chromosome chr = new Chromosome(chrName, genome);
+		Chromosome chr = new CompressedChromosome(chrName, genome);
 		
 		Variant[] vars = new Variant[] {
 				new Insertion(chrName, 1, "GGGG"),
-				//new Deletion(chrName, 3, 6),
-				//new Insertion(chrName, genome.length(), "TTTTT"),
+				new Deletion(chrName, 16, 2),
 				new Inversion(chrName, 2, 5, "++"),
 				new Inversion(chrName, 3, 6, "--"),
 				new Duplication(chrName, 10, 15)
@@ -25,6 +24,8 @@ public class TestVariantGraph {
 			System.out.println("Processing " + var);
 			chr.processSVs(var.getAdjacenciesAsList());
 		}
+		
+		chr.processAllSVs();
 		
 		String seq = chr.traverseGraph();
 		
