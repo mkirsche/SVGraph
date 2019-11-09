@@ -10,9 +10,11 @@ public class TestRealData {
 public static void main(String[] args) throws Exception
 {
 	String vcfFn = "chr16_34.vcf";
-	if(args.length == 1)
+	String genomeFn = "/home/mkirsche/references/genome_nochr.fa";
+	if(args.length == 2)
 	{
 		vcfFn = args[0];
+		genomeFn = args[1];
 	}
 
 	Scanner vcfInput = new Scanner(new FileInputStream(new File(vcfFn)));
@@ -25,6 +27,7 @@ public static void main(String[] args) throws Exception
 	
 	int minStart = Integer.MAX_VALUE;
 	int maxEnd = 0;
+	String chrName = "";
 	
 	while(vcfInput.hasNext())
 	{
@@ -63,10 +66,11 @@ public static void main(String[] args) throws Exception
 		
 		minStart = Math.min(minStart,  (int)cur.start - 5);
 		maxEnd = Math.max(maxEnd, (int)cur.end + 5);
+		chrName = cur.chr;
 		toProcess.add(cur);
 	}
 	
-	Chromosome chr = new CompressedChromosome("/home/mkirsche/references/genome.fa", "chr16", minStart, maxEnd);
+	Chromosome chr = new CompressedChromosome(genomeFn, chrName, minStart, maxEnd);
 	System.out.println("Initialized chromosome of length " + chr.n);
 	
 	for(Variant cur : toProcess)

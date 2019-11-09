@@ -2,7 +2,7 @@
  * Code for testing different variant types
  */
 public class TestVariantGraph {
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
 		String chrName = "testChr";
 		String genome = "ACGTACGTACGTACGTACGT";
