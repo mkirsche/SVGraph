@@ -19,7 +19,14 @@ public class Insertion extends Variant {
 		super(var);
 		this.end = var.pos + 1;
 		this.strand = "+-";
-		this.seq = ""; // TODO get actual sequence
+		if(var.alt.length() == 5) // Old format 
+		{
+			this.seq = var.getInfo("SEQ");
+		}
+		else
+		{
+			this.seq = var.alt.substring(var.ref.length());
+		}
 	}
 
 	@Override
@@ -32,7 +39,7 @@ public class Insertion extends Variant {
 	
 	public String toString()
 	{
-		return "insertion in " + chr + " at position " + start + " of sequence " + seq;
+		return "insertion in " + chr + " at position " + start + " of sequence length " + seq.length();
 	}
 	
 }

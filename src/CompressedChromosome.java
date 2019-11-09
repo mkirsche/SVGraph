@@ -17,12 +17,31 @@ public class CompressedChromosome extends Chromosome {
 	int[] starts;
 	HashMap<Integer, Integer> posToNode;
 	
+	// Used for querying genome from a file instead of storing it
+	GenomeQuery gq;
+	String chrFromFile;
+	int startFromFile, endFromFile;
+	
 	// Store the list of novel adjacencies here until we have them all
 	ArrayList<NovelAdjacency> toProcess;
 
 	CompressedChromosome(String name, String chromosome) {
 		super(name, chromosome);
 		toProcess =	new ArrayList<NovelAdjacency>();
+		gq = null;
+	}
+	
+	CompressedChromosome(String genomeFn, String chr, int start, int end) throws Exception
+	{
+		super();
+		toProcess =	new ArrayList<NovelAdjacency>();
+		
+		gq = new GenomeQuery(genomeFn);
+		chrFromFile = chr;
+		startFromFile = start;
+		endFromFile = end;
+		n = end - start + 1;
+		name = chr;
 	}
 	
 	/*
@@ -58,15 +77,15 @@ public class CompressedChromosome extends Chromosome {
 			int toStrand = change.strand.charAt(1) == '-' ? 0 : 1;
 			if(change.add)
 			{
-				System.out.println("  Adding edge from " + change.pos1 + change.strand.charAt(0) + " to "
-						+ change.pos2 + change.strand.charAt(1) + " with sequence \"" + change.seq + "\"");
+				//System.out.println("  Adding edge from " + change.pos1 + change.strand.charAt(0) + " to "
+				//		+ change.pos2 + change.strand.charAt(1) + " with sequence \"" + change.seq + "\"");
 				addEdge(atStrand, posToNode.get((int)change.pos1), toStrand,  
 						posToNode.get((int)change.pos2), change.seq, true);
 			}
 			else
 			{
-				System.out.println("  Removing edge from " + change.pos1 + change.strand.charAt(0) + " to "
-						+ change.pos2 + change.strand.charAt(1) + " with sequence \"" + change.seq + "\"");
+				//System.out.println("  Removing edge from " + change.pos1 + change.strand.charAt(0) + " to "
+				//		+ change.pos2 + change.strand.charAt(1) + " with sequence \"" + change.seq + "\"");
 				removeEdge(atStrand, posToNode.get((int)change.pos1), 
 						new UndirectedEdge(toStrand, posToNode.get((int)change.pos2), change.seq));
 			}
@@ -110,11 +129,15 @@ public class CompressedChromosome extends Chromosome {
 	 * Get the sequence of an edge, filling it in from the genome if needed
 	 * Overridden from Chromosome class to allow a node to represent a substring
 	 */
-	String getSeq(int atPos, int atStrand, Edge e)
+	String getSeq(int atPos, int atStrand, Edge e) throws Exception
 	{
 		if(e.seq.length() > 0) return e.seq;
 		if(atPos == e.toPos && atPos > 0 && atPos != n+1)
 		{
+			if(gq != null)
+			{
+				return gq.genomeSubstring(chrFromFile, startFromFile + starts[atPos]-1, startFromFile + starts[atPos+1] - 2);
+			}
 			return chromosome.substring(starts[atPos]-1, starts[atPos+1]-1);
 		}
 		return "";

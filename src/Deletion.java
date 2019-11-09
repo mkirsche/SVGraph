@@ -8,7 +8,7 @@ public class Deletion extends Variant {
 	{
 		this.chr = chr;
 		this.start = pos;
-		this.end = pos + length + 1;
+		this.end = pos + Math.abs(length) + 1;
 		this.strand = "+-";
 		this.seq = "";
 		this.type = "DEL";
@@ -17,7 +17,7 @@ public class Deletion extends Variant {
 	Deletion(VCFObject var)
 	{
 		super(var);
-		this.end = start + var.length + 1;
+		this.end = start + Math.abs(var.length) + 1;
 		this.strand = "+-";
 	}
 

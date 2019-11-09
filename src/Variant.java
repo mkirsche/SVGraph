@@ -63,7 +63,7 @@ public abstract class Variant
 		}
 		long startDist = Math.abs(getStart() - o.getStart());
 		long endDist = Math.abs(getEnd() - o.getEnd());
-		if(startDist +  endDist > MAX_DIST)
+		if(startDist + endDist > MAX_DIST)
 		{
 			same = false;
 		}

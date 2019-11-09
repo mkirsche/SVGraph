@@ -31,6 +31,11 @@ public class Chromosome {
 		initGraph();
 	}
 	
+	Chromosome()
+	{
+		
+	}
+	
 	/*
 	 * Construct the initial graph
 	 */
@@ -38,32 +43,32 @@ public class Chromosome {
 	void initGraph()
 	{
 		// Allocate data structure
-				graph = new TreeMap[2][n+2];
-				for(int i = 0; i<graph.length; i++)
-				{
-					for(int j = 0; j<graph[i].length; j++)
-					{
-						graph[i][j] = new TreeMap<Edge, Integer>();
-					}
-				}
-				for(int i = 0; i <= n + 1; i++)
-				{
-					// Edge from - to +
-					if(i >= 1 && i <= n)
-					{
-						addEdge(0, i, 1, i, "", true);
-					}
-					else
-					{
-						addEdge(0, i, 1, i, "", true);
-					}
-					
-					// Edge from + to next -
-					if(i != n + 1)
-					{
-						addEdge(1, i, 0, i+1, "", true);
-					}
-				}
+		graph = new TreeMap[2][n+2];
+		for(int i = 0; i<graph.length; i++)
+		{
+			for(int j = 0; j<graph[i].length; j++)
+			{
+				graph[i][j] = new TreeMap<Edge, Integer>();
+			}
+		}
+		for(int i = 0; i <= n + 1; i++)
+		{
+			// Edge from - to +
+			if(i >= 1 && i <= n)
+			{
+				addEdge(0, i, 1, i, "", true);
+			}
+			else
+			{
+				addEdge(0, i, 1, i, "", true);
+			}
+			
+			// Edge from + to next -
+			if(i != n + 1)
+			{
+				addEdge(1, i, 0, i+1, "", true);
+			}
+		}
 	}
 	
 	/*
@@ -77,14 +82,14 @@ public class Chromosome {
 			int toStrand = change.strand.charAt(1) == '-' ? 0 : 1;
 			if(change.add)
 			{
-				System.out.println("  Adding edge from " + change.pos1 + change.strand.charAt(0) + " to "
-						+ change.pos2 + change.strand.charAt(1) + " with sequence \"" + change.seq + "\"");
+				//System.out.println("  Adding edge from " + change.pos1 + change.strand.charAt(0) + " to "
+				//		+ change.pos2 + change.strand.charAt(1) + " with sequence \"" + change.seq + "\"");
 				addEdge(atStrand, (int)change.pos1, toStrand, (int)change.pos2, change.seq, true);
 			}
 			else
 			{
-				System.out.println("  Removing edge from " + change.pos1 + change.strand.charAt(0) + " to "
-						+ change.pos2 + change.strand.charAt(1) + " with sequence \"" + change.seq + "\"");
+				//System.out.println("  Removing edge from " + change.pos1 + change.strand.charAt(0) + " to "
+				//		+ change.pos2 + change.strand.charAt(1) + " with sequence \"" + change.seq + "\"");
 				removeEdge(atStrand, (int)change.pos1, new UndirectedEdge(toStrand, (int)change.pos2, change.seq));
 			}
 		}
@@ -120,7 +125,7 @@ public class Chromosome {
 		int oldCount = fromMap.containsKey(e) ? fromMap.get(e) : 0;
 		if(oldCount == 0)
 		{
-			System.out.println("    Edge already removed so doing nothing");
+			//System.out.println("    Edge already removed so doing nothing");
 			return;
 		}
 		if(oldCount == 1)
@@ -158,7 +163,7 @@ public class Chromosome {
 	 * in simple cases without weird overlapping variants
 	 * TODO update this with fancy algorithm
 	 */
-	String traverseGraph()
+	String traverseGraph() throws Exception
 	{
 		int atStrand = 0;
 		int atPos = 0;
@@ -203,7 +208,7 @@ public class Chromosome {
 	/*
 	 * Get the sequence of an edge, filling it in from the genome if needed
 	 */
-	String getSeq(int atPos, int atStrand, Edge e)
+	String getSeq(int atPos, int atStrand, Edge e) throws Exception
 	{
 		if(e.seq.length() > 0) return e.seq;
 		if(atPos == e.toPos && atPos > 0 && atPos != n+1)

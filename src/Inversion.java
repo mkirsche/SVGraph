@@ -15,8 +15,8 @@ public class Inversion extends Variant {
 	Inversion(VCFObject var)
 	{
 		super(var);
-		this.end = var.pos + var.length;
-		this.strand = var.getInfo("STRAND");
+		this.end = var.pos + Math.abs(var.length);
+		this.strand = var.getInfo("STRANDS");
 	}
 
 	@Override
@@ -25,6 +25,7 @@ public class Inversion extends Variant {
 		{
 			return new NovelAdjacency[] {
 					new NovelAdjacency(chr, start, end, "--", "", true),
+					new NovelAdjacency(chr, start-1, end-1, "++", "", true),
 					new NovelAdjacency(chr, start-1, start, "+-", "", false),
 					new NovelAdjacency(chr, end-1, end, "+-", "", false)
 			};
@@ -33,6 +34,7 @@ public class Inversion extends Variant {
 		{
 			return new NovelAdjacency[] {
 					new NovelAdjacency(chr, start, end, "++", "", true),
+					new NovelAdjacency(chr, start+1, end+1, "--", "", true),
 					new NovelAdjacency(chr, end, end+1, "+-", "", false),
 					new NovelAdjacency(chr, start, start+1, "+-", "", false)
 			};
